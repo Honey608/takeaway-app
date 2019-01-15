@@ -1,29 +1,86 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <v-header :dataapp="seller" ></v-header>
+    <div class="tab">
+      <router-link class="tab-item" :class="{'active':frist}" to="/commodity">商品</router-link>
+      <router-link class="tab-item" to="/comment" @click.native="toggle()">评论</router-link>
+      <router-link class="tab-item" to="/business" @click.native="toggle1()">商家</router-link>
     </div>
-    <router-view/>
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
+
   </div>
 </template>
+<script>
+import header from './components/header/header.vue'
+import dataapp from '../data.json'
+import { urlParse } from './assets/js/util'
+
+export default {
+  data () {
+    return {
+      frist: true,
+      seller: dataapp,
+      id: (() => {
+        let queryParam = urlParse()
+        return queryParam.id
+      })()
+    }
+  },
+  components: {
+    'v-header': header
+  },
+  methods: {
+    toggle () {
+      this.frist = false
+    },
+    toggle1 () {
+      this.frist = false
+    }
+  },
+  created () {
+    this.seller = Object.assign({}, this.seller, { id: this.id })
+  }
+  // mounted() {
+  //   $.ajax({
+  //     type:"GET",
+  //     url: "../data.json",
+  //     dataType: 'jsonp',
+  //     success: function (res) {
+  //       console.log(res)
+  //     }
+  //   })
+  // }
+  // created() {
+  //   this.$http.get('/api/commodity').then(response => {
+  //    this.someData = response.body
+  //   })
+  // }
+}
+</script>
 
 <style lang="less">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+#app > .tab {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  // position: absolute;
+  border-bottom: 1px solid rgba(7,17,27,0.1);
 }
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+#app > .tab > .tab-item {
+  text-align: center;
+  flex: 1;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+  color: rgb(77, 85, 93);
+}
+#app > .tab > .router-link-active {
+  color: rgb(240, 20, 20);
+}
+#app > .tab > .active {
+  color: rgb(240, 20, 20);
 }
 </style>
